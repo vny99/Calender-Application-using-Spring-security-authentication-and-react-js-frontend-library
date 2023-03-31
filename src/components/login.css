@@ -1,0 +1,16 @@
+
+.card{
+    width: 340px;
+}
+
+.label_align_left{
+    float: left;
+}
+.container-fluid{
+    height: 100vh;
+}
+.legend{
+    font-weight: 600;
+    font-size: 20px;
+}
+   
