@@ -31,12 +31,14 @@ function CalenderPage() {
     const [name,setName]=useState('');
     const[status,setStatus]=useState()
     const [submitDisabled ,setSubmitDisabled]=useState(false);
+    const[monthDates,SetMonthDates]=useState([]);
     const today= new Date();
     const maxDate=new Date();
     const minDate=new Date();
      maxDate.setFullYear(today.getFullYear()+1);
      minDate.setFullYear(today.getFullYear()-1);
     useEffect(() => {
+        console.log(monthDates)
         if(new Date().getTime()>date.getTime()){
             setSelect(false)
             setEvetVariant("outline-light")
@@ -216,10 +218,7 @@ function CalenderPage() {
        }
 
     }, [date])
-   function renderDay(props){
    
-      
-   }
     const handleShow = () => setShow(!show);
     const handleHdChecked = () => {
         setFdChecked(false)
@@ -265,6 +264,119 @@ function CalenderPage() {
         authService.logout();
         navigate('/login', { replace: true })
     }
+    function renderDay({date}){
+        debugger;
+        const today= new Date();
+        const isToday=date.toDateString()=== today.toDateString();
+        let className='react-calendar__day--tile';
+        
+        if(isToday){
+            className += ' today';
+        }
+        return (
+            <div className={className}>
+                <div className="react-calendar__day--number">{date.getDate()}</div>
+                <h1>vinay</h1>
+            </div>
+        );
+    }
+    const CustomDay=({date})=>{
+        let d=monthDates;
+      
+        const dayDate=date.toString();
+        const toPrintNameIsThere=d.find(item=>item.dayDate===dayDate);
+        if(toPrintNameIsThere!==undefined){
+           if(toPrintNameIsThere.day!=null && toPrintNameIsThere.fN!=null && toPrintNameIsThere.aN!=null){
+            return <span><br></br><span>{toPrintNameIsThere.day[0]}</span><br></br><span>{toPrintNameIsThere.fN[0]+"-FN"}</span><br></br><span>{toPrintNameIsThere.day[0]+"-AN"}</span><br></br></span>
+
+           }
+           else if(toPrintNameIsThere.day!=null && toPrintNameIsThere.fN!=null){
+            return  <span><br></br><span>{toPrintNameIsThere.day[0]}</span><br></br><span>{toPrintNameIsThere.fN[0]+"-FN"}</span><br></br></span>
+           }
+          else if(toPrintNameIsThere.fN!=null && toPrintNameIsThere.aN!=null){
+            if(toPrintNameIsThere.fN.length>1 && toPrintNameIsThere.aN.length>1){
+            return <span><br></br><span>{toPrintNameIsThere.aN[0]+"-AN"}</span><br></br><span>{toPrintNameIsThere.aN[1]+"-AN"}</span><br></br><span>{toPrintNameIsThere.fN[0]+"-FN"}</span><br></br><span>{toPrintNameIsThere.fN[1]+"-FN"}</span><br></br></span>
+            }
+            else if(toPrintNameIsThere.fN.length === 1 && toPrintNameIsThere.aN.length > 1){
+                return <span><br></br><span>{toPrintNameIsThere.aN[0]+"-AN"}</span><br></br><span>{toPrintNameIsThere.aN[1]+"-AN"}</span><br></br><span>{toPrintNameIsThere.fN[0]+"-FN"}</span><br></br></span>
+              }
+             else if(toPrintNameIsThere.fN.length > 1 && toPrintNameIsThere.aN.length === 1){
+                return <span><br></br><span>{toPrintNameIsThere.aN[0]+"-AN"}</span><span>{toPrintNameIsThere.fN[0]+"-FN"}</span><br></br><span>{toPrintNameIsThere.fN[1]+"-FN"}</span><br></br></span>
+              }
+              
+             else if(toPrintNameIsThere.fN.length === 1 && toPrintNameIsThere.aN.length === 1){
+                return <span><br></br><span>{toPrintNameIsThere.aN[0]+"-AN"}</span><span>{toPrintNameIsThere.fN[0]+"-FN"}</span><br></br></span>
+              }
+              
+        
+           }
+           else if(toPrintNameIsThere.day!=null && toPrintNameIsThere.aN!=null){
+           return <span><br></br><span>{toPrintNameIsThere.day[0]}</span><br></br><span>{toPrintNameIsThere.aN[0]+"-AN"}</span></span>
+           }
+           else {
+            if(toPrintNameIsThere.day!=null){
+              if(toPrintNameIsThere.day.length>1){
+                return <span><br></br><span>{toPrintNameIsThere.day[0]}</span><br></br><span>{toPrintNameIsThere.day[1]}</span></span>
+              }
+              else{
+                return <span><br></br>{toPrintNameIsThere.day[0]}</span>
+              }
+            }
+            if(toPrintNameIsThere.fN!=null){
+                if(toPrintNameIsThere.fN.length>1){
+                    return <span><br></br><span>{toPrintNameIsThere.fN[0]+"-FN"}</span><br></br><span>{toPrintNameIsThere.fN[1]+"-FN"}</span></span>
+                }
+                else if(toPrintNameIsThere.fN.length === 1){
+                    return <span><br></br><span>{toPrintNameIsThere.fN[0]+"-FN"}</span></span>
+                  }
+
+            }
+            if(toPrintNameIsThere.aN!=null){
+                if(toPrintNameIsThere.aN.length > 1){
+                    return <span><br></br><span>{toPrintNameIsThere.aN[0]+"-AN"}</span><br></br><span>{toPrintNameIsThere.aN[1]+"-AN"}</span></span>
+                  }
+                  else  if(toPrintNameIsThere.aN.length === 1){
+                    return <span><br></br><span>{toPrintNameIsThere.aN[0]+"-AN"}</span></span>
+                  }
+                  
+                  
+
+            }
+
+           }
+
+        }
+
+    leaveService.getLeave(date).then(res=>{
+       
+        if(res.data.day!=null||res.data.fN!=null||res.data.aN!=null){
+            
+            let ob={dayDate:dayDate};
+
+            if(res.data.day!=null){
+                ob.day=res.data.day
+              }
+              if(res.data.fN!=null){
+                  ob.fN=res.data.fN
+              }
+              if(res.data.aN!=null){
+                  ob.aN=res.data.aN
+              }
+    const nameIsThere=d.find(item=>item.dayDate===dayDate)
+    if(nameIsThere===undefined){
+         d.push(ob);
+    }
+    
+        SetMonthDates(d);
+
+        }
+       
+    })
+            
+        
+    
+    }
+
     return (<>
         <div className="container-fluid calendar-fluid p-2 d-flex align-content-center align-items-center ">
             <Navbar fixed="top" bg='primary' expand='lg' variant="dark">
@@ -281,11 +393,11 @@ function CalenderPage() {
             </Navbar>
 
             <div className="calendarContainer d-flex ">
-                <Calendar onChange={setDate} onClickDay={handleSelect} maxDate={maxDate}  minDate={minDate} renderDay={renderDay}  />
+                <Calendar onChange={setDate} onClickDay={handleSelect} maxDate={maxDate}  minDate={minDate} tileContent={({date})=><CustomDay date={date}/>}  />
             </div>
             < div className="legend  row text-white d-flex " style={{ width: "100%" }} >
                 <div className="col-sm-3 d-flex">
-                    <p className="">Your leaves :&nbsp;</p>
+                    <p className="">Your leaves :<br></br></p>
                 </div>
                 <div className="col-sm-3 d-flex">
                     <p>Slot :<p style={{fontSize:'14px',color:'#f4c842' }} >{status==='a'&& <p><RiCheckboxBlankFill style={{ color: "#78e75c" }} /> Available</p>} {status==='b'&& <p><RiCheckboxBlankFill style={{ color: '#c91b1b' }} /> Booked</p>}{status==='p'&& <p> <RiCheckboxBlankFill style={{ color: "yellow" }}/> Partly Available</p>}</p></p>
